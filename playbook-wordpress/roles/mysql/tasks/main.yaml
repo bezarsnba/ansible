@@ -1,0 +1,57 @@
+---
+- name: Install software-proprieties-common
+  apt:
+    name: software-properties-common
+    state: present
+    update_cache: no
+  become: yes
+
+- name: Run apt-key
+  apt_key:
+    keyserver: hkp://keyserver.ubuntu.com
+    id: F1656F24C74CD1D8
+    state: present
+  become: yes
+
+- name: Run apt-repository  
+  apt_repository:
+    repo: deb [arch=amd64,arm64,ppc64el] http://mirror.ufscar.br/mariadb/repo/10.3/ubuntu bionic main
+    state: present
+  become: yes
+
+- name: Install python-mysqldb
+  apt: name={{ item }} state=present update_cache=yes
+  with_items:
+     - mariadb-client
+     - mariadb-server
+     - python-mysqldb
+  become: yes
+
+- name: Start MariaDB
+  systemd:
+    state: restarted
+    name: mariadb
+    enabled: yes
+    masked: no
+  become: yes
+
+- name: Create DB
+  mysql_db: 
+    name: wp_wordpress
+    state: present
+  become: yes
+  
+- name: Create user wp
+  mysql_user:
+    name: wp
+    password: 123456
+    priv: '*.*:ALL'
+    state: present
+  become: yes
+
+  
+
+
+
+
+  

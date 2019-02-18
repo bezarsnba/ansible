@@ -1,0 +1,95 @@
+server {
+    listen 80;
+    listen [::]:80;
+    root /var/www/html/teste/wordpress;
+    index  index.php index.html index.htm;
+    server_name  _;
+
+    client_max_body_size 100M;
+
+    location / {
+        try_files $uri $uri/ /index.php?$args;        
+    }
+    location /wp-content/uploads/dlm_uploads {
+        deny all;
+        return 403;
+    }
+
+    location = /xmlrpc.php {
+        deny all;
+        access_log off;
+        log_not_found off;
+    }
+
+    set $skip_cache 0;
+
+    # POST requests and URLs with a query string should always go to PHP
+    if ($request_method = POST) {
+        set $skip_cache 1;
+    }
+
+    if ($query_string != "") {
+        set $skip_cache 1;
+    }
+
+    # Don't cache URIs containing the following segments
+    if ($request_uri ~* "/wp-admin/|/xmlrpc.php|wp-.*.php|/feed/|index.php
+                         |sitemap(_index)?.xml") {
+        set $skip_cache 1;
+    }
+
+    # Don't use the cache for logged-in users or recent commenters
+    if ($http_cookie ~* "comment_author|wordpress_[a-f0-9]+|wp-postpass
+        |wordpress_no_cache|wordpress_logged_in") {
+        set $skip_cache 1;
+    }
+
+    #Media: images, icons, video, audio
+    location ~* \.(ogg|ogv|svg|svgz|eot|otf|woff|mp4|ttf|css|rss|atom|js|jpg|jpeg|gif|png|ico|zip|tgz|gz|rar|bz2|doc|xls|exe|ppt|tar|mid|midi|wav|bmp|rtf)$ {
+           expires max;
+           log_not_found off;
+           access_log off;
+    }
+
+
+ # gzip
+ gzip on;
+ gzip_vary on;
+ gzip_proxied any;
+ gzip_comp_level 6;
+ gzip_types text/plain text/css text/xml application/json application/javascript application/xml+rss application/atom+xml image/svg+xml;
+
+ # security headers
+ add_header X-Frame-Options "SAMEORIGIN" always;
+ add_header X-XSS-Protection "1; mode=block" always;
+ add_header X-Content-Type-Options "nosniff" always;
+ add_header Referrer-Policy "no-referrer-when-downgrade" always;
+ add_header Content-Security-Policy "default-src * data: 'unsafe-eval' 'unsafe-inline'" always;
+
+ # . files
+ location ~ /\.(?!well-known) {
+	deny all;
+ }
+
+ # assets, media
+ location ~* \.(?:css(\.map)?|js(\.map)?|jpe?g|png|gif|ico|cur|heic|webp|tiff?|mp3|m4a|aac|ogg|midi?|wav|mp4|mov|webm|mpe?g|avi|ogv|flv|wmv)$ {
+	expires 7d;
+	access_log off;
+ }
+
+ # svg, fonts
+ location ~* \.(?:svgz?|ttf|ttc|otf|eot|woff2?)$ {
+	add_header Access-Control-Allow-Origin "*";
+	expires 7d;
+	access_log off;
+ } 
+    ## fastcgi
+    location ~ \.php$ {
+    include snippets/fastcgi-php.conf;
+    fastcgi_pass             unix:/var/run/php/php7.2-fpm.sock;
+    fastcgi_param   SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    fastcgi_buffers			8 16k;
+    fastcgi_buffer_size		32k;
+
+}
+}

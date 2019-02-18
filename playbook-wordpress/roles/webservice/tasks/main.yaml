@@ -1,0 +1,139 @@
+---
+# tasks file for nginx
+  - name: install nginx
+    apt: name={{item}} state=latest
+    with_items:
+      - nginx
+      - php-fpm
+      - php-common
+      - php-mbstring
+      - php-xmlrpc 
+      - php-soap
+      - php-gd
+      - php-xml
+      - php-intl
+      - php-mysql
+      - php-cli
+      - php-ldap 
+      - php-zip
+      - php-curl
+    become: yes
+
+  - name: create directory site
+    file:
+      path: /var/www/html/teste
+      state: directory
+      mode: 0755
+    become: yes
+
+  - name: send devops.conf to sites-enabled
+    template:
+       src: site.conf.j2
+       dest: /etc/nginx/sites-enabled/teste.conf
+       owner: root
+       group: root
+    become: yes
+
+  - name: sendo nginx to nginx.conf
+    template:
+       src: nginx.conf.j2
+       dest: /etc/nginx/nginx.conf
+       owner: root
+       group: root
+    become: yes
+
+  - name: copy conf php-fpm
+    template:
+       src: php.ini.j2
+       dest: /etc/php/7.2/fpm/php.ini
+       owner: root
+       group: root
+    become: yes
+
+  - name: Extract site
+    unarchive:
+       src: files/wordpress-5.0.3.zip
+       dest: /var/www/html/teste/
+    become: yes
+
+  - name: copy conf nginx
+    template:
+      src: wp-config.php.j2
+      dest: /var/www/html/teste/wordpress/wp-config.php
+      owner: root
+      group: root
+    become: yes    
+  - name: Alter permission
+    file:
+      path: /var/www/html
+      state: directory
+      owner: www-data
+      group: www-data
+      mode: 0755
+      recurse: yes
+    become: yes
+
+  - name: Make sure a service is running
+    systemd: state=restarted name=nginx
+    become: yes
+
+  - name: Make sure a service is running
+    systemd: state=restarted name=php-fpm7.2
+    become: yes'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  #- template:
+  #     src: nginx.conf.j2
+  #     dest: /etc/nginx/nginx.conf
+  #     owner: root
+  #     group: root
+  #     mode: 0644
+
+  #- name: patch site
+  #  unarchive:
+  #     src: evolutionconsulting.com.br.zip
+  #     dest: /var/www/html
+  #     owner: nginx
+  #     group: nginx
+  #     mode: u=rwx,g=rwx,o=rx
+
+  #- template:
+  #    src: nginx.conf.j2
+  #    dest: /etc/nginx/nginx.conf
+  #    owner: root
+  #    group: root
+  #    mode: 0644
+
+
+  #- template:
+  #     src: wp-config.php.j2
+  #     dest: /var/www/html/evolutionconsulting.com.br/wp-config.php
+  #     owner: nginx
+  #     group: nginx
+  #     mode: 0644
+
+
+
+  #- systemd:
+  #    name: nginx
+  #    state: restarted
+
+  #- systemd:
+  #    name: php-fpm
+  #    state: restarted
