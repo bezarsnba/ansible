@@ -1,3 +1,2 @@
 [hosts]
-#127.0.0.1:2222 ansible_ssh_private_key_file=/home/bezarsnba/devops/vagrant/devopsgo/.vagrant/machines/default/virtualbox/private_key ansible_user=vagrant
-35.198.8.165 ansible_user=bezarsnba
+192.168.33.15 ansible_user=vagrant
