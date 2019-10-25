@@ -4,5 +4,5 @@
   when: staging is match("create-inst")
 
 - name: destroy
-  include: destroy.yml
+  include: destroy.yaml
   when: staging is match("destroy-inst")
