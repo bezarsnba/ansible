@@ -8,7 +8,7 @@
 
 ## Google CLoud Plataform Project
 
-1. You will need to create a Google Cloud Plataform 
+1. You will need to create a Google Cloud Plataform  account
 2. You'll need a [Service Account](https://cloud.google.com/compute/docs/access/service-accounts#serviceaccount).
 3. Next you will want to install the [Cloud SDK](https://cloud.google.com/sdk/)
 
