@@ -26,7 +26,7 @@
       mode: 0755
     become: yes
 
-  - name: send devops.conf to sites-enabled
+  - name: send site.conf.j2 to sites-enabled
     template:
        src: site.conf.j2
        dest: /etc/nginx/sites-enabled/teste.conf
