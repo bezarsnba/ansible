@@ -56,4 +56,4 @@ ansible-playbook -i hosts/ansible_hosts --extra-vars "staging=destroy-inst" play
 
 [Repository GoogleCloud Plataform](https://github.com/GoogleCloudPlatform/compute-video-demo-ansible)
 
-
+[Slides DevFestCerrado](https://pt.slideshare.net/bezalielramos/descubra-como-o-ansible-pode-ajudar-no-provisionamento-de-gce-184847824)
