@@ -1,0 +1,6 @@
+---
+
+project: <PROJECT_NAME>
+auth_kind: serviceaccount
+credentials_file: files/<JSON_FILE_CREDENTIALS>
+service_account_email: <SERVICE_ACCOUNT_EMAIL>

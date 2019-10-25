@@ -1,0 +1,8 @@
+---
+- name: create
+  include : create-inst.yaml
+  when: staging is match("create-inst")
+
+- name: destroy
+  include: destroy.yml
+  when: staging is match("destroy-inst")

@@ -1,0 +1,51 @@
+---
+- name: DevFest | Include vars
+  include_vars:
+    dir: vars
+  vars:
+    possible_files:
+      - auth.yml
+      - machine.yml
+
+- name: DevFest | Create address
+  gcp_compute_address:
+    name: "{{ name_zonea }}-ip"
+    region: "{{ region }}"
+    auth_kind: "{{ auth_kind }}"
+    project: "{{ project }}"
+    service_account_file: "{{ credentials_file }}"
+  register: address
+
+- name: DevFest | Create Instance
+  gcp_compute_instance:
+    name: "{{ name_zonea }}"
+    machine_type: "{{ machine_type }}"
+    tags:
+      items:
+        - http-server
+        - https-server
+    disks:
+      - auto_delete: true
+        boot: true
+        initialize_params:
+          disk_name: "{{ name_zonea }}"
+          disk_size_gb: 10
+          source_image: "{{image}}"
+    
+    network_interfaces:
+      - access_configs:
+          - name: External NAT
+            nat_ip: "{{ address }}"
+            type: ONE_TO_ONE_NAT
+
+    zone: "{{ zone }}"
+    project: "{{ project }}"
+    service_account_file: "{{ credentials_file }}"
+    auth_kind: "{{ auth_kind }}"
+    state: present
+  register: gce
+
+- name: Wait for SSH for instances in first zone
+  wait_for: delay=1 host={{ address.address }} port=22 state=started timeout=60
+- name: Save host data for first zone
+  add_host: hostname={{ address.address }} groupname=gce_instances_ips

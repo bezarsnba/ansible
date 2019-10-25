@@ -1,0 +1,8 @@
+name_zonea: devfestinst
+zone: southamerica-east1-a
+region: southamerica-east1
+machine_type: n1-standard-1
+#image: https://www.googleapis.com/compute/v1/projects/centos-cloud/global/images/centos-7-v20190916
+image: https://www.googleapis.com/compute/v1/projects/debian-cloud/global/images/family/debian-9
+
+# https://www.googleapis.com/compute/v1/projects/centos-cloud/global/images/centos-7-v20190916

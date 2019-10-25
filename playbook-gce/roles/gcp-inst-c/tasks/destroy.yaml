@@ -1,0 +1,27 @@
+---
+- name: DevFest | Include vars
+  include_vars:
+    dir: vars
+  vars:
+    possible_files:
+      - auth.yml
+      - machine.yml
+
+- name: DevFest| Destroy instance "{{ name_zonea }}"
+  gcp_compute_instance:
+        name: "{{ name_zonea }}"
+        zone: "{{ zone }}"
+        project: "{{ project }}"
+        service_account_file: "{{ credentials_file }}"
+        auth_kind: "{{ auth_kind }}"
+        state: absent
+
+- name: DevFest | Destroy address
+  gcp_compute_address:
+    name: devfest-address
+    region: "{{ region }}"
+    auth_kind: "{{ auth_kind }}"
+    project: "{{ project }}"
+    service_account_file: "{{ credentials_file }}"
+    state: absent
+  register: address
